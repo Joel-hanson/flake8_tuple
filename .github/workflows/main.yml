@@ -6,6 +6,8 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.4', '3.5', '3.6', '3.7', '3.8', '3.9']
+    env: 
+      PYTHON_VERSION: ${{ matrix.python-version }}
     name: Python ${{ matrix.python-version }} sample
     steps:
       - uses: actions/checkout@v2
@@ -26,17 +28,15 @@ jobs:
           pip install tox
           pip install flake8
           pip install -e .
-      - name: Install tox-gh-actions
-        if: ${{ matrix.python-version != '3.4' }}
-        run: pip install tox-gh-actions
-      - name: Test with tox 🚀
+          if [[ "$PYTHON_VERSION" != "3.4" ]] ; then
+            pip install tox-gh-actions
+          fi
+      - name: Run tox 🚀
         run: |
           if [[ "$PYTHON_VERSION" == "3.4" ]] ; then
             tox -e py34
           else
             tox
           fi
-        env: 
-          PYTHON_VERSION: ${{ matrix.python-version }}
       - name: Run tests 🚀
         run: flake8 tests/issues
