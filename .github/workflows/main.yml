@@ -27,9 +27,16 @@ jobs:
           pip install flake8
           pip install -e .
       - name: Install tox-gh-actions
-        if: ${{ matrix.python-version != '3.4' }}
+        if: ${{ matrix.python-version != "3.4" }}
         run: pip install tox-gh-actions
       - name: Test with tox 🚀
-        run: tox
+        run: |
+          if [[ "$PYTHON_VERSION" == "3.4" ]] ; then
+            tox -e py34
+          else
+            tox
+          fi
+        env: 
+          PYTHON_VERSION: ${{ matrix.python-version }}
       - name: Run tests 🚀
         run: flake8 tests/issues
