@@ -2,7 +2,7 @@ name: Install & Test
 on: [push]
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
         python-version: ['3.4', '3.5', '3.6', '3.7', '3.8', '3.9']
@@ -11,6 +11,13 @@ jobs:
     name: Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v2
+      - name: Local fix 🛠
+        run: |
+          # Hack to get setup-python to work in github actions
+          # (see https://github.com/nektos/act/issues/251)
+          if [ ! -f "/etc/lsb-release" ] ; then
+            echo "DISTRIB_RELEASE=18.04" > /etc/lsb-release
+          fi
       - name: Setup python 🐍
         uses: actions/setup-python@v2
         with:
